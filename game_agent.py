@@ -41,7 +41,7 @@ def custom_score(game, player):
         return float('inf')
     
     own_moves = len(game.get_legal_moves(player))
-    scale = 0.9
+    scale = 0.75
     opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
 
     return float(own_moves * scale - opp_moves)
@@ -74,7 +74,7 @@ def custom_score_2(game, player):
     opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
     blank_spots = len(game.get_blank_spaces())
     
-    return float(own_moves/(opp_moves + 0.001))
+    return float(own_moves/blank_spots - opp_moves/blank_spots)
 
 def custom_score_3(game, player):
     """Calculate the heuristic value of a game state from the point of view
@@ -101,29 +101,27 @@ def custom_score_3(game, player):
     # TODO: finish this function!
     # based on this paper I read: http://ggp.stanford.edu/readings/cluneplayer.pdf
     # move_count, black_spaces, legal_moves, board_size
-    # calculate payoff
-    p = 0
     if game.is_winner(player):
-        p = 100
+        return float('inf')
 
     if game.is_loser(player):
-        p = -100
-    
-    # calculate control
+        return float('-inf')
+
     opp = game.get_opponent(player)
     own_moves = game.get_legal_moves(player)
-    opp_moves = game.get_legal_moves(opp)    
-    c = len(own_moves) - len(opp_moves)
+    opp_moves = game.get_legal_moves(opp)
+
+    # calculate payoff
+    p = len(own_moves)
+
+    # calculate control
+    c = p - len(opp_moves)
 
     # calculate terminal probability
     board_size = game.width * game.height #total spaces
-    t = float(game.move_count/board_size)
-    # calculate payoff stability
-    #sp = 
-    # calculate control stability
-    #sc = 
+    t = float(board_size/game.move_count)
     
-    return (p + c) * 1/t
+    return (p + c) * t
 
 class IsolationPlayer:
     """Base class for minimax and alphabeta agents -- this class is never

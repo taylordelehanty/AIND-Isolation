@@ -23,7 +23,7 @@ from sample_players import (RandomPlayer, open_move_score,
 from game_agent import (MinimaxPlayer, AlphaBetaPlayer, custom_score,
                         custom_score_2, custom_score_3)
 
-NUM_MATCHES = 5  # number of matches against each opponent
+NUM_MATCHES = 20  # number of matches against each opponent
 TIME_LIMIT = 150  # number of milliseconds before timeout
 
 DESCRIPTION = """
@@ -60,13 +60,15 @@ def play_round(cpu_agent, test_agents, win_counts, num_matches):
 
         # play all games and tally the results
         for game in games:
-            winner, _, termination = game.play(time_limit=TIME_LIMIT)
+            winner, move_list, termination = game.play(time_limit=TIME_LIMIT)
             win_counts[winner] += 1
 
             if termination == "timeout":
                 timeout_count += 1
             elif termination == "forfeit":
                 forfeit_count += 1
+            with open("all_moves.txt", "a") as move_file:
+                move_file.write(str(move_list) + '\n')
 
     return timeout_count, forfeit_count
 
